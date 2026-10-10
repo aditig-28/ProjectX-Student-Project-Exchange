@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explore Projects - ProjectX</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-badge">PX</div>
+        <div>
+          <span>ProjectX</span>
+          <span class="logo-sub">Student Exchange</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="projects.html" class="nav-link active">Explore Projects</a></li>
+        <li><a href="students.html" class="nav-link">Students Directory</a></li>
+        <li><a href="dashboard.html" class="nav-link">My Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="user-switcher" title="Active Demo Student for Actions">
+          <img id="header-user-avatar" class="user-avatar-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar">
+          <select id="demo-user-select"></select>
+        </div>
+        <a href="create-project.html" class="btn btn-primary btn-sm">+ Post Project</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container section">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Explore Student Projects</h1>
+        <p class="section-desc">Search across college engineering departments, filter by technology stack or team availability.</p>
+      </div>
+      <div>
+        <a href="create-project.html" class="btn btn-primary">+ Publish Project</a>
+      </div>
+    </div>
+
+    <!-- Filter and Search Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="filter-search" placeholder="Search by title, description, skills (e.g. AI, Java)...">
+      </div>
+
+      <select id="filter-category" class="filter-select">
+        <option value="all">All Categories</option>
+        <option value="Artificial Intelligence">Artificial Intelligence</option>
+        <option value="Web Development">Web Development</option>
+        <option value="Cybersecurity">Cybersecurity</option>
+        <option value="IoT & Embedded">IoT & Embedded</option>
+        <option value="Data Science">Data Science</option>
+        <option value="Mobile App">Mobile App</option>
+        <option value="Cloud & DevOps">Cloud & DevOps</option>
+      </select>
+
+      <select id="filter-status" class="filter-select">
+        <option value="all">All Statuses</option>
+        <option value="Open">Open (Accepting Members)</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <button id="btn-reset-filters" class="btn btn-secondary btn-sm" type="button">Reset Filters</button>
+    </div>
+
+    <!-- Projects Grid Container -->
+    <div class="cards-grid" id="projects-container">
+      <div class="empty-state">
+        <div class="empty-icon">⏳</div>
+        <div class="empty-title">Loading Projects...</div>
+        <div class="empty-desc">Querying Oracle Database via REST API...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Join Request Modal -->
+  <div class="modal-backdrop" id="join-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Request to Join Project</h3>
+        <button class="modal-close" onclick="Modal.close('join-modal')">&times;</button>
+      </div>
+      <form id="join-request-form">
+        <div class="modal-body">
+          <input type="hidden" id="join-project-id">
+          <div class="form-group">
+            <label class="form-label">Project</label>
+            <div id="join-project-title" style="font-weight: 700; color: var(--navy); margin-bottom: 0.5rem;"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Applying As (Active Demo Student)</label>
+            <div id="join-applicant-info" style="font-size:0.9rem; color:var(--text-muted); background:var(--bg-subtle); padding:0.6rem 0.8rem; border-radius:var(--radius-sm);"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="join-message">Cover Note & Relevant Skills <span style="color:var(--danger)">*</span></label>
+            <textarea id="join-message" class="form-textarea" rows="4" placeholder="Explain your experience with the required tech stack and what role you'd like to take..." required></textarea>
+            <div class="form-help">The project owner will review your note and profile before accepting.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="Modal.close('join-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Send Join Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div>&copy; 2026 ProjectX - Student Project Collaboration Portal.</div>
+      <div>Powered by Java Servlets & Oracle Database 21c XE.</div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    let allProjects = [];
+
+    async function loadProjects() {
+      const search = document.getElementById("filter-search").value;
+      const category = document.getElementById("filter-category").value;
+      const status = document.getElementById("filter-status").value;
+
+      const container = document.getElementById("projects-container");
+
+      try {
+        const res = await API.projects.getAll({ search, category, status });
+        allProjects = res.data || [];
+        renderProjects(allProjects);
+      } catch (err) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <div class="empty-title">Error Loading Projects</div>
+            <div class="empty-desc">${err.message}</div>
+          </div>
+        `;
+      }
+    }
+
+    function renderProjects(projects) {
+      const container = document.getElementById("projects-container");
+      if (!projects || projects.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-title">No Projects Found</div>
+            <div class="empty-desc">No projects match your current filters. Try resetting the filters or creating a new project.</div>
+            <button class="btn btn-secondary btn-sm" onclick="resetFilters()">Reset All Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      const activeStudentId = UserStore.getActiveId();
+      container.innerHTML = "";
+
+      projects.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "project-card";
+        const percent = Math.min(100, Math.round((p.currentMembers / p.teamSize) * 100));
+        const techList = p.technologies.split(",").map(t => `<span class="tech-tag">${t.trim()}</span>`).join("");
+
+        const isOwner = p.ownerId === activeStudentId;
+        let actionBtn = "";
+        if (isOwner) {
+          actionBtn = `<span class="btn btn-secondary btn-sm" style="cursor:default;opacity:0.8;">My Project</span>`;
+        } else if (p.status === "Open" && p.spotsRemaining > 0) {
+          actionBtn = `<button class="btn btn-primary btn-sm" onclick="openJoinModal(${p.projectId}, '${escapeHtml(p.title)}')">Request to Join</button>`;
+        } else {
+          actionBtn = `<a href="project-details.html?id=${p.projectId}" class="btn btn-secondary btn-sm">View Details</a>`;
+        }
+
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="badge-cat">${p.category}</span>
+            <span class="badge-status ${p.status}">${p.status}</span>
+          </div>
+          <h3 class="card-title"><a href="project-details.html?id=${p.projectId}">${escapeHtml(p.title)}</a></h3>
+          <p class="card-desc">${escapeHtml(p.description)}</p>
+          <div class="tech-tags">${techList}</div>
+
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.75rem;">
+            <strong>Skills Needed:</strong> ${escapeHtml(p.requiredSkills)}
+          </div>
+
+          <div class="team-progress">
+            <div class="team-progress-info">
+              <span>Team Size</span>
+              <span><strong>${p.currentMembers} / ${p.teamSize}</strong> (${p.spotsRemaining} spots left)</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="owner-chip">
+              <div class="owner-avatar" style="display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;">
+                ${p.ownerName ? p.ownerName.charAt(0) : "P"}
+              </div>
+              <div class="owner-meta">
+                <div class="owner-name">${escapeHtml(p.ownerName)}</div>
+                <div class="owner-dept">${p.ownerDepartment ? escapeHtml(p.ownerDepartment.split(" ")[0]) : "Student"}</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:0.4rem; align-items:center;">
+              <a href="project-details.html?id=${p.projectId}" class="btn btn-outline btn-sm">Details</a>
+              ${actionBtn}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openJoinModal(projectId, title) {
+      document.getElementById("join-project-id").value = projectId;
+      document.getElementById("join-project-title").textContent = title;
+      
+      const select = document.getElementById("demo-user-select");
+      const activeName = select ? select.options[select.selectedIndex]?.text : "Current Student";
+      document.getElementById("join-applicant-info").textContent = activeName;
+      document.getElementById("join-message").value = "";
+
+      Modal.open("join-modal");
+    }
+
+    document.getElementById("join-request-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const projectId = parseInt(document.getElementById("join-project-id").value, 10);
+      const studentId = UserStore.getActiveId();
+      const message = document.getElementById("join-message").value.trim();
+
+      try {
+        await API.requests.create({
+          projectId,
+          studentId,
+          message
+        });
+        Toast.success("Join request submitted successfully!");
+        Modal.close("join-modal");
+        loadProjects();
+      } catch (err) {
+        Toast.error(err.message);
+      }
+    });
+
+    function resetFilters() {
+      document.getElementById("filter-search").value = "";
+      document.getElementById("filter-category").value = "all";
+      document.getElementById("filter-status").value = "all";
+      loadProjects();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    let searchTimeout = null;
+    document.getElementById("filter-search").addEventListener("input", () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(loadProjects, 300);
+    });
+    document.getElementById("filter-category").addEventListener("change", loadProjects);
+    document.getElementById("filter-status").addEventListener("change", loadProjects);
+    document.getElementById("btn-reset-filters").addEventListener("click", resetFilters);
+
+    window.addEventListener("projectx:userChanged", loadProjects);
+    document.addEventListener("DOMContentLoaded", loadProjects);
+  </script>
+</body>
+</html>

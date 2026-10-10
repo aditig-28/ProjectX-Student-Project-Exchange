@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProjectX - Student Project Exchange & Collaboration Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-badge">PX</div>
+        <div>
+          <span>ProjectX</span>
+          <span class="logo-sub">Student Exchange</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="projects.html" class="nav-link">Explore Projects</a></li>
+        <li><a href="students.html" class="nav-link">Students Directory</a></li>
+        <li><a href="dashboard.html" class="nav-link">My Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Demo User Identity Switcher -->
+        <div class="user-switcher" title="Active Demo Student for CRUD and Requests">
+          <img id="header-user-avatar" class="user-avatar-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar">
+          <select id="demo-user-select"></select>
+        </div>
+
+        <a href="create-project.html" class="btn btn-primary btn-sm">+ Post Project</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Database Connection Diagnostic Pill -->
+  <div id="db-health-banner" style="background: #ecfdf5; border-bottom: 1px solid #a7f3d0; padding: 0.4rem 1rem; font-size: 0.82rem; text-align: center; color: #065f46; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;animation:pulse 1.5s infinite;"></span>
+    <span id="db-health-text">Connecting to Oracle Database 21c XE backend...</span>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-pill">
+        <span>⚡</span> Powered by Java Jakarta Servlets & Oracle Database XE
+      </div>
+      <h1>Exchange Ideas. <span>Build Teams.</span> Ship Projects.</h1>
+      <p class="hero-sub">
+        The premier campus collaboration portal for students. Discover innovative final-year capstones, contribute your specialized skills, and find the perfect teammates across engineering departments.
+      </p>
+      <div class="hero-actions">
+        <a href="projects.html" class="btn btn-primary">Browse Projects &rarr;</a>
+        <a href="create-project.html" class="btn btn-secondary">Publish Your Project</a>
+        <a href="students.html" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3); color:white;">Find Teammates</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Statistics Ribbon -->
+  <section class="container">
+    <div class="stats-ribbon" id="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon primary">👥</div>
+        <div>
+          <div class="stat-val" id="stat-students">--</div>
+          <div class="stat-lbl">Active Students</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon accent">🚀</div>
+        <div>
+          <div class="stat-val" id="stat-projects">--</div>
+          <div class="stat-lbl">Total Projects</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon success">🟢</div>
+        <div>
+          <div class="stat-val" id="stat-open">--</div>
+          <div class="stat-lbl">Open Projects</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon warning">🤝</div>
+        <div>
+          <div class="stat-val" id="stat-collabs">--</div>
+          <div class="stat-lbl">Collaborations</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">How ProjectX Works</h2>
+          <p class="section-desc">Turn raw project ideas into verified college engineering capstones in 3 steps.</p>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.75rem;">
+        <div style="background:white; padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+          <div style="font-size:2rem; margin-bottom:1rem; color:var(--primary); font-weight:800;">01</div>
+          <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:0.5rem; color:var(--navy);">Publish or Discover</h3>
+          <p style="font-size:0.9rem; color:var(--text-muted);">
+            Project owners publish ideas specifying tech stacks and required skill sets. Students browse projects filtered by domains like AI, IoT, or Web Dev.
+          </p>
+        </div>
+
+        <div style="background:white; padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+          <div style="font-size:2rem; margin-bottom:1rem; color:var(--accent); font-weight:800;">02</div>
+          <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:0.5rem; color:var(--navy);">Request to Join</h3>
+          <p style="font-size:0.9rem; color:var(--text-muted);">
+            Send a tailored join request showcasing your technical strengths. Project owners review applicants and accept teammates with one click.
+          </p>
+        </div>
+
+        <div style="background:white; padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+          <div style="font-size:2rem; margin-bottom:1rem; color:var(--success); font-weight:800;">03</div>
+          <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:0.5rem; color:var(--navy);">Collaborate & Ship</h3>
+          <p style="font-size:0.9rem; color:var(--text-muted);">
+            Manage team membership, track open positions, connect Git repositories, and move projects from In-Progress to Completed status.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Projects Section -->
+  <section class="section" style="background: var(--bg-subtle);">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Featured Student Projects</h2>
+          <p class="section-desc">Active collaborative capstones currently accepting applications.</p>
+        </div>
+        <a href="projects.html" class="btn btn-secondary btn-sm">View All Projects &rarr;</a>
+      </div>
+
+      <div class="cards-grid" id="featured-projects-container">
+        <!-- Rendered dynamically via JavaScript -->
+        <div class="empty-state">
+          <div class="empty-icon">⏳</div>
+          <div class="empty-title">Loading Featured Projects...</div>
+          <div class="empty-desc">Fetching live records from Oracle Database via REST API...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="logo" style="color:white; margin-bottom:1rem;">
+            <div class="logo-badge">PX</div>
+            <span>ProjectX</span>
+          </div>
+          <p style="font-size:0.88rem; line-height:1.6; max-width:320px;">
+            Full-Stack College Project Exchange. Built with Jakarta Servlets 6.0, Oracle Database 21c XE, JDBC, and Vanilla Web Technologies.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="projects.html">All Projects</a></li>
+            <li><a href="create-project.html">Post a Project</a></li>
+            <li><a href="students.html">Students Directory</a></li>
+            <li><a href="dashboard.html">My Dashboard</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Technical Stack</h4>
+          <ul class="footer-links">
+            <li><a href="#">Java 21 (OpenJDK)</a></li>
+            <li><a href="#">Jakarta Servlets 6.0</a></li>
+            <li><a href="#">Apache Tomcat 10.1</a></li>
+            <li><a href="#">Oracle Database 21c XE</a></li>
+            <li><a href="#">Oracle JDBC Driver (ojdbc11)</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>College Viva Docs</h4>
+          <ul class="footer-links">
+            <li><a href="docs/api-documentation.md" target="_blank">REST API Specs</a></li>
+            <li><a href="docs/database-design.md" target="_blank">Database Schema</a></li>
+            <li><a href="docs/architecture.md" target="_blank">Architecture Diagram</a></li>
+            <li><a href="docs/viva-questions.md" target="_blank">Viva Q&A Guide</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 ProjectX Portal. Designed for College Evaluation and Demonstration.</div>
+        <div style="display:flex; gap:1.5rem;">
+          <span>Status: <strong style="color:#34d399;">Production Ready</strong></span>
+          <span>Security: Safe Parameterized Queries</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 1. Check Backend & Oracle DB Health
+      try {
+        const health = await API.health.check();
+        const banner = document.getElementById("db-health-banner");
+        const text = document.getElementById("db-health-text");
+        if (health.data && health.data.connected) {
+          text.innerHTML = `<strong>Live Database Connected:</strong> ${health.data.databaseProductName} (${health.data.databaseProductVersion}) via ${health.data.driverName}`;
+        } else {
+          banner.style.background = "#fffbeb";
+          banner.style.color = "#92400e";
+          text.textContent = "Database status: Disconnected. Check local Oracle service and db.properties.";
+        }
+      } catch (e) {
+        document.getElementById("db-health-text").textContent = "Backend API initializing or offline. Open via Tomcat at /projectx/";
+      }
+
+      // 2. Fetch Live Statistics
+      try {
+        const dash = await API.dashboard.get();
+        if (dash.data) {
+          document.getElementById("stat-students").textContent = dash.data.totalStudents || 0;
+          document.getElementById("stat-projects").textContent = dash.data.totalProjects || 0;
+          document.getElementById("stat-open").textContent = dash.data.openProjects || 0;
+          document.getElementById("stat-collabs").textContent = dash.data.activeCollaborations || 0;
+        }
+      } catch (e) {
+        console.warn("Could not load stats:", e);
+      }
+
+      // 3. Load Featured Projects
+      try {
+        const res = await API.projects.getAll({ status: "Open" });
+        const container = document.getElementById("featured-projects-container");
+        if (res.data && res.data.length > 0) {
+          container.innerHTML = "";
+          // Show up to 3 featured open projects
+          res.data.slice(0, 3).forEach(p => {
+            const card = document.createElement("div");
+            card.className = "project-card";
+            const percent = Math.min(100, Math.round((p.currentMembers / p.teamSize) * 100));
+            const techList = p.technologies.split(",").map(t => `<span class="tech-tag">${t.trim()}</span>`).join("");
+
+            card.innerHTML = `
+              <div class="card-top">
+                <span class="badge-cat">${p.category}</span>
+                <span class="badge-status ${p.status}">${p.status}</span>
+              </div>
+              <h3 class="card-title"><a href="project-details.html?id=${p.projectId}">${p.title}</a></h3>
+              <p class="card-desc">${p.description}</p>
+              <div class="tech-tags">${techList}</div>
+              
+              <div class="team-progress">
+                <div class="team-progress-info">
+                  <span>Team Positions</span>
+                  <span><strong>${p.currentMembers} / ${p.teamSize}</strong> (${p.spotsRemaining} spots left)</span>
+                </div>
+                <div class="progress-bar-track">
+                  <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <div class="owner-chip">
+                  <div class="owner-avatar" style="display:flex;align-items:center;justify-content:center;color:var(--primary);font-weight:700;">
+                    ${p.ownerName ? p.ownerName.charAt(0) : "P"}
+                  </div>
+                  <div class="owner-meta">
+                    <div class="owner-name">${p.ownerName}</div>
+                    <div class="owner-dept">${p.ownerDepartment ? p.ownerDepartment.split(" ")[0] : "Eng"}</div>
+                  </div>
+                </div>
+                <a href="project-details.html?id=${p.projectId}" class="btn btn-outline btn-sm">Details &rarr;</a>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">📁</div>
+              <div class="empty-title">No Projects Found</div>
+              <div class="empty-desc">Be the first to publish a student capstone project!</div>
+              <a href="create-project.html" class="btn btn-primary btn-sm">+ Publish Project</a>
+            </div>
+          `;
+        }
+      } catch (e) {
+        console.error("Could not fetch featured projects:", e);
+      }
+    });
+  </script>
+</body>
+</html>

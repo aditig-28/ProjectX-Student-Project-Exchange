@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profile - ProjectX</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-badge">PX</div>
+        <div>
+          <span>ProjectX</span>
+          <span class="logo-sub">Student Exchange</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="projects.html" class="nav-link">Explore Projects</a></li>
+        <li><a href="students.html" class="nav-link">Students Directory</a></li>
+        <li><a href="dashboard.html" class="nav-link">My Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="user-switcher" title="Active Demo Student">
+          <img id="header-user-avatar" class="user-avatar-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar">
+          <select id="demo-user-select"></select>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container section">
+    <div style="max-width: 680px; margin: 0 auto;">
+      <div style="margin-bottom: 1.5rem;">
+        <a href="dashboard.html" style="font-weight: 600; font-size: 0.9rem;">&larr; Back to Dashboard</a>
+      </div>
+
+      <div style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2.5rem; box-shadow: var(--shadow-md);">
+        <div style="margin-bottom: 2rem; text-align: center;">
+          <img id="profile-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light); margin-bottom: 0.75rem;">
+          <h1 id="profile-heading" style="font-size: 1.75rem; font-weight: 800; color: var(--navy); margin-bottom: 0.2rem;">My Profile</h1>
+          <p style="font-size: 0.9rem; color: var(--text-muted);">Manage your personal details and academic affiliation stored in Oracle Database.</p>
+        </div>
+
+        <form id="profile-form">
+          <div class="form-group">
+            <label class="form-label" for="prof-fullname">Full Name <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="prof-fullname" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prof-email">College Email Address <span style="color:var(--danger)">*</span></label>
+            <input type="email" id="prof-email" class="form-input" required>
+            <div class="form-help">Must be unique across all students.</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem;">
+            <div class="form-group">
+              <label class="form-label" for="prof-dept">Department <span style="color:var(--danger)">*</span></label>
+              <select id="prof-dept" class="form-select" required>
+                <option value="Computer Science and Engineering">Computer Science and Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+                <option value="Data Science & AI">Data Science & AI</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="prof-year">Year of Study <span style="color:var(--danger)">*</span></label>
+              <select id="prof-year" class="form-select" required>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="Postgraduate">Postgraduate</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prof-skills">Skills (Comma-separated)</label>
+            <input type="text" id="prof-skills" class="form-input" placeholder="e.g. Java, Oracle, Docker, Spring, Microservices">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prof-avatar">Avatar URL</label>
+            <input type="url" id="prof-avatar" class="form-input" placeholder="https://example.com/avatar.jpg">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prof-bio">Short Bio & Interests</label>
+            <textarea id="prof-bio" class="form-textarea" rows="4"></textarea>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border-color);">
+            <button type="button" class="btn btn-danger btn-sm" onclick="handleDeleteProfile()">Delete Profile</button>
+            <div style="display:flex; gap:0.75rem;">
+              <a href="dashboard.html" class="btn btn-secondary btn-sm">Cancel</a>
+              <button type="submit" class="btn btn-primary btn-sm">Save Profile Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div>&copy; 2026 ProjectX - Student Project Exchange Portal.</div>
+      <div>Jakarta Servlets & Oracle Database 21c XE.</div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    let currentStudent = null;
+
+    async function loadProfile() {
+      const studentId = UserStore.getActiveId();
+      try {
+        const resp = await API.students.getById(studentId);
+        currentStudent = resp.data;
+        if (currentStudent) {
+          document.getElementById("prof-fullname").value = currentStudent.fullName;
+          document.getElementById("prof-email").value = currentStudent.email;
+          document.getElementById("prof-dept").value = currentStudent.department;
+          document.getElementById("prof-year").value = currentStudent.yearOfStudy;
+          document.getElementById("prof-skills").value = currentStudent.skills || "";
+          document.getElementById("prof-avatar").value = currentStudent.avatarUrl || "";
+          document.getElementById("prof-bio").value = currentStudent.bio || "";
+          document.getElementById("profile-heading").textContent = currentStudent.fullName;
+
+          if (currentStudent.avatarUrl) {
+            document.getElementById("profile-avatar-preview").src = currentStudent.avatarUrl;
+          }
+        }
+      } catch (err) {
+        Toast.error("Failed to load student profile: " + err.message);
+      }
+    }
+
+    document.getElementById("profile-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentStudent) return;
+
+      const payload = {
+        studentId: currentStudent.studentId,
+        fullName: document.getElementById("prof-fullname").value.trim(),
+        email: document.getElementById("prof-email").value.trim(),
+        department: document.getElementById("prof-dept").value,
+        yearOfStudy: document.getElementById("prof-year").value,
+        skills: document.getElementById("prof-skills").value.trim(),
+        avatarUrl: document.getElementById("prof-avatar").value.trim() || null,
+        bio: document.getElementById("prof-bio").value.trim()
+      };
+
+      try {
+        await API.students.update(currentStudent.studentId, payload);
+        Toast.success("Profile updated successfully!");
+        UserStore.initUserSelector();
+        loadProfile();
+      } catch (err) {
+        Toast.error(err.message);
+      }
+    });
+
+    async function handleDeleteProfile() {
+      if (!confirm("Are you sure you want to permanently delete your student profile? This will also remove any projects you own.")) {
+        return;
+      }
+      try {
+        await API.students.delete(currentStudent.studentId);
+        Toast.success("Student profile removed.");
+        UserStore.setActiveId(1);
+        setTimeout(() => {
+          window.location.href = "students.html";
+        }, 800);
+      } catch (err) {
+        Toast.error(err.message);
+      }
+    }
+
+    window.addEventListener("projectx:userChanged", loadProfile);
+    document.addEventListener("DOMContentLoaded", loadProfile);
+  </script>
+</body>
+</html>

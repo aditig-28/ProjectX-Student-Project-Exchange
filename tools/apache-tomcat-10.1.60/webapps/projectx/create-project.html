@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post a Project - ProjectX</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-badge">PX</div>
+        <div>
+          <span>ProjectX</span>
+          <span class="logo-sub">Student Exchange</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="projects.html" class="nav-link">Explore Projects</a></li>
+        <li><a href="students.html" class="nav-link">Students Directory</a></li>
+        <li><a href="dashboard.html" class="nav-link">My Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="user-switcher" title="Publishing Owner">
+          <img id="header-user-avatar" class="user-avatar-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar">
+          <select id="demo-user-select"></select>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container section">
+    <div style="max-width: 760px; margin: 0 auto;">
+      <div style="margin-bottom: 1.5rem;">
+        <a href="projects.html" style="font-weight: 600; font-size: 0.9rem;">&larr; Back to all projects</a>
+      </div>
+
+      <div style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2.5rem; box-shadow: var(--shadow-md);">
+        <div style="margin-bottom: 2rem;">
+          <h1 id="page-title" style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-bottom: 0.4rem;">
+            Publish a New Student Project
+          </h1>
+          <p id="page-subtitle" style="font-size: 0.95rem; color: var(--text-muted);">
+            Share your project idea, outline required technical skills, and recruit student collaborators from any engineering department.
+          </p>
+        </div>
+
+        <form id="project-form">
+          <input type="hidden" id="edit-project-id">
+
+          <!-- Title -->
+          <div class="form-group">
+            <label class="form-label" for="proj-title">Project Title <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="proj-title" class="form-input" placeholder="e.g. EcoTrack: Campus Energy & Carbon Telemetry" required>
+            <div class="form-help">Clear, descriptive title for your engineering capstone or research work.</div>
+          </div>
+
+          <!-- Category & Status -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label" for="proj-category">Domain / Category <span style="color:var(--danger)">*</span></label>
+              <select id="proj-category" class="form-select" required>
+                <option value="">Select Category...</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="IoT & Embedded">IoT & Embedded</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Mobile App">Mobile App</option>
+                <option value="Cloud & DevOps">Cloud & DevOps</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="proj-status">Project Status <span style="color:var(--danger)">*</span></label>
+              <select id="proj-status" class="form-select" required>
+                <option value="Open">Open (Looking for Team Members)</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Team Size & Github URL -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label" for="proj-teamsize">Total Target Team Size (1 - 20) <span style="color:var(--danger)">*</span></label>
+              <input type="number" id="proj-teamsize" class="form-input" min="1" max="20" value="4" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="proj-github">GitHub / Git Repository URL</label>
+              <input type="url" id="proj-github" class="form-input" placeholder="https://github.com/org/project-repo">
+            </div>
+          </div>
+
+          <!-- Technologies -->
+          <div class="form-group">
+            <label class="form-label" for="proj-tech">Technologies & Frameworks <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="proj-tech" class="form-input" placeholder="e.g. Java, Oracle 21c, Jakarta Servlets, Vanilla JS" required>
+            <div class="form-help">Comma-separated list of programming languages and libraries used.</div>
+          </div>
+
+          <!-- Required Skills -->
+          <div class="form-group">
+            <label class="form-label" for="proj-skills">Required Skills for Applicants <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="proj-skills" class="form-input" placeholder="e.g. REST APIs, SQL Queries, Frontend Design, Docker" required>
+            <div class="form-help">What technical background should interested students possess?</div>
+          </div>
+
+          <!-- Detailed Description -->
+          <div class="form-group">
+            <label class="form-label" for="proj-desc">Detailed Project Description <span style="color:var(--danger)">*</span></label>
+            <textarea id="proj-desc" class="form-textarea" rows="6" placeholder="Describe the problem your project solves, architectural objectives, methodology, and what teammates will learn..." required></textarea>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border-color);">
+            <a href="projects.html" class="btn btn-secondary">Cancel</a>
+            <button type="submit" id="btn-submit" class="btn btn-primary">Publish Project &rarr;</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div>&copy; 2026 ProjectX - Student Project Exchange Portal.</div>
+      <div>Jakarta Servlets & Oracle Database 21c XE.</div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    let isEditing = false;
+    let editId = null;
+
+    async function checkEditMode() {
+      const params = new URLSearchParams(window.location.search);
+      editId = params.get("edit");
+      if (editId) {
+        isEditing = true;
+        document.getElementById("page-title").textContent = "Edit Project";
+        document.getElementById("page-subtitle").textContent = "Update project metadata, specifications, and team availability.";
+        document.getElementById("btn-submit").textContent = "Save Changes";
+        document.getElementById("edit-project-id").value = editId;
+
+        try {
+          const resp = await API.projects.getById(editId);
+          const p = resp.data;
+          document.getElementById("proj-title").value = p.title;
+          document.getElementById("proj-category").value = p.category;
+          document.getElementById("proj-status").value = p.status;
+          document.getElementById("proj-teamsize").value = p.teamSize;
+          document.getElementById("proj-github").value = p.githubUrl || "";
+          document.getElementById("proj-tech").value = p.technologies;
+          document.getElementById("proj-skills").value = p.requiredSkills;
+          document.getElementById("proj-desc").value = p.description;
+        } catch (err) {
+          Toast.error("Failed to load project details for editing: " + err.message);
+        }
+      }
+    }
+
+    document.getElementById("project-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("proj-title").value.trim();
+      const category = document.getElementById("proj-category").value;
+      const status = document.getElementById("proj-status").value;
+      const teamSize = parseInt(document.getElementById("proj-teamsize").value, 10);
+      const githubUrl = document.getElementById("proj-github").value.trim();
+      const technologies = document.getElementById("proj-tech").value.trim();
+      const requiredSkills = document.getElementById("proj-skills").value.trim();
+      const description = document.getElementById("proj-desc").value.trim();
+      const ownerId = UserStore.getActiveId();
+
+      const payload = {
+        title,
+        category,
+        status,
+        teamSize,
+        githubUrl: githubUrl || null,
+        technologies,
+        requiredSkills,
+        description,
+        ownerId
+      };
+
+      try {
+        if (isEditing) {
+          payload.projectId = parseInt(editId, 10);
+          await API.projects.update(editId, payload);
+          Toast.success("Project updated successfully!");
+          setTimeout(() => {
+            window.location.href = `project-details.html?id=${editId}`;
+          }, 600);
+        } else {
+          const res = await API.projects.create(payload);
+          Toast.success("Project published successfully!");
+          const newId = res.data ? res.data.projectId : "";
+          setTimeout(() => {
+            window.location.href = newId ? `project-details.html?id=${newId}` : "projects.html";
+          }, 600);
+        }
+      } catch (err) {
+        Toast.error(err.message);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", checkEditMode);
+  </script>
+</body>
+</html>

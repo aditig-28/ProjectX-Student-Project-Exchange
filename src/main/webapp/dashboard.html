@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - ProjectX</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .dash-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+    .dash-tab-btn {
+      background: none;
+      border: none;
+      padding: 0.85rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+    .dash-tab-btn.active {
+      color: var(--primary);
+    }
+    .dash-tab-btn.active::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+    .dash-tab-content {
+      display: none;
+    }
+    .dash-tab-content.active {
+      display: block;
+    }
+    .badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: var(--radius-full);
+      margin-left: 0.4rem;
+    }
+    .badge-count.alert {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-badge">PX</div>
+        <div>
+          <span>ProjectX</span>
+          <span class="logo-sub">Student Exchange</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="projects.html" class="nav-link">Explore Projects</a></li>
+        <li><a href="students.html" class="nav-link">Students Directory</a></li>
+        <li><a href="dashboard.html" class="nav-link active">My Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="user-switcher" title="Active Demo Student">
+          <img id="header-user-avatar" class="user-avatar-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar">
+          <select id="demo-user-select"></select>
+        </div>
+        <a href="create-project.html" class="btn btn-primary btn-sm">+ Post Project</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container section">
+    <!-- Active Student Profile Banner -->
+    <div style="background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.75rem 2rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 1.25rem;">
+        <img id="dash-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-light);">
+        <div>
+          <h1 id="dash-name" style="font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.2rem;">--</h1>
+          <div id="dash-meta" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.4rem;">--</div>
+          <div id="dash-skills" class="tech-tags"></div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <a href="create-project.html" class="btn btn-primary btn-sm">+ Post New Project</a>
+        <a href="profile.html" class="btn btn-secondary btn-sm">Edit Profile</a>
+      </div>
+    </div>
+
+    <!-- Overview Metric Cards -->
+    <div class="stats-ribbon" style="margin-top: 0; margin-bottom: 2.5rem;">
+      <div class="stat-card">
+        <div class="stat-icon primary">📁</div>
+        <div>
+          <div class="stat-val" id="cnt-my-projects">0</div>
+          <div class="stat-lbl">My Created Projects</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon accent">🤝</div>
+        <div>
+          <div class="stat-val" id="cnt-memberships">0</div>
+          <div class="stat-lbl">Joined Teams</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon warning">📬</div>
+        <div>
+          <div class="stat-val" id="cnt-incoming-reqs">0</div>
+          <div class="stat-lbl">Incoming Requests</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon success">📤</div>
+        <div>
+          <div class="stat-val" id="cnt-outgoing-reqs">0</div>
+          <div class="stat-lbl">Sent Applications</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Tabs -->
+    <div class="dash-tabs">
+      <button class="dash-tab-btn active" onclick="switchTab('tab-incoming')">
+        Incoming Join Requests <span class="badge-count alert" id="badge-incoming-count">0</span>
+      </button>
+      <button class="dash-tab-btn" onclick="switchTab('tab-projects')">
+        My Projects <span class="badge-count" id="badge-projects-count">0</span>
+      </button>
+      <button class="dash-tab-btn" onclick="switchTab('tab-outgoing')">
+        My Sent Requests <span class="badge-count" id="badge-outgoing-count">0</span>
+      </button>
+      <button class="dash-tab-btn" onclick="switchTab('tab-teams')">
+        Collaborations & Teams <span class="badge-count" id="badge-teams-count">0</span>
+      </button>
+    </div>
+
+    <!-- Tab 1: Incoming Requests to My Projects -->
+    <div id="tab-incoming" class="dash-tab-content active">
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Target Project</th>
+                <th>Cover Note</th>
+                <th>Date Received</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-incoming">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: My Projects -->
+    <div id="tab-projects" class="dash-tab-content">
+      <div class="cards-grid" id="grid-my-projects">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- Tab 3: Outgoing Requests Sent by Me -->
+    <div id="tab-outgoing" class="dash-tab-content">
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Project</th>
+                <th>Project Owner</th>
+                <th>My Message</th>
+                <th>Sent Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-outgoing">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Collaborations & Teams -->
+    <div id="tab-teams" class="dash-tab-content">
+      <div class="cards-grid" id="grid-my-teams">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div>&copy; 2026 ProjectX - Student Project Exchange Portal.</div>
+      <div>Jakarta Servlets & Oracle Database 21c XE.</div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    let dashboardData = null;
+
+    async function loadDashboard() {
+      const studentId = UserStore.getActiveId();
+      try {
+        const resp = await API.dashboard.get(studentId);
+        dashboardData = resp.data;
+        renderDashboard(dashboardData);
+      } catch (err) {
+        Toast.error("Could not load dashboard data: " + err.message);
+      }
+    }
+
+    function renderDashboard(data) {
+      if (!data) return;
+
+      // Active student banner
+      const student = data.currentStudent;
+      if (student) {
+        document.getElementById("dash-name").textContent = student.fullName;
+        document.getElementById("dash-meta").textContent = `${student.department} • ${student.yearOfStudy} • ${student.email}`;
+        if (student.avatarUrl) {
+          document.getElementById("dash-avatar").src = student.avatarUrl;
+        }
+        const skillsEl = document.getElementById("dash-skills");
+        skillsEl.innerHTML = (student.skills || "").split(",").map(s => `<span class="tech-tag">${s.trim()}</span>`).join("");
+      }
+
+      // Counts
+      const pendingIncoming = (data.incomingRequests || []).filter(r => r.status === "Pending").length;
+      document.getElementById("cnt-my-projects").textContent = data.myProjectsCount || 0;
+      document.getElementById("cnt-memberships").textContent = data.myMembershipsCount || 0;
+      document.getElementById("cnt-incoming-reqs").textContent = pendingIncoming;
+      document.getElementById("cnt-outgoing-reqs").textContent = data.outgoingRequestsCount || 0;
+
+      document.getElementById("badge-incoming-count").textContent = pendingIncoming;
+      document.getElementById("badge-projects-count").textContent = data.myProjectsCount || 0;
+      document.getElementById("badge-outgoing-count").textContent = data.outgoingRequestsCount || 0;
+      document.getElementById("badge-teams-count").textContent = data.myMembershipsCount || 0;
+
+      // Render Tab 1: Incoming Requests
+      renderIncomingRequests(data.incomingRequests || []);
+
+      // Render Tab 2: My Projects
+      renderMyProjects(data.myProjects || []);
+
+      // Render Tab 3: Outgoing Requests
+      renderOutgoingRequests(data.outgoingRequests || []);
+
+      // Render Tab 4: Joined Teams
+      renderJoinedTeams(data.joinedProjects || []);
+    }
+
+    function renderIncomingRequests(requests) {
+      const tbody = document.getElementById("tbody-incoming");
+      if (!requests || requests.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2.5rem;color:var(--text-muted);">No join requests received yet for your projects.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = requests.map(r => {
+        let actionButtons = "";
+        if (r.status === "Pending") {
+          actionButtons = `
+            <div style="display:flex;gap:0.4rem;">
+              <button class="btn btn-success btn-sm" onclick="handleRequest(${r.requestId}, 'Accepted')">Accept</button>
+              <button class="btn btn-secondary btn-sm" onclick="handleRequest(${r.requestId}, 'Rejected')">Reject</button>
+            </div>
+          `;
+        } else {
+          actionButtons = `<span style="font-size:0.82rem;color:var(--text-muted);">${r.respondedAt ? 'Processed' : '--'}</span>`;
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:600;color:var(--navy);">${escapeHtml(r.applicantName)}</div>
+              <div style="font-size:0.78rem;color:var(--text-muted);">${escapeHtml(r.applicantEmail)} &bull; ${escapeHtml(r.applicantDepartment || "Eng")}</div>
+            </td>
+            <td>
+              <a href="project-details.html?id=${r.projectId}" style="font-weight:600;">${escapeHtml(r.projectTitle)}</a>
+            </td>
+            <td style="max-width:280px;font-size:0.88rem;">${escapeHtml(r.message)}</td>
+            <td style="font-size:0.82rem;color:var(--text-muted);">${r.createdAt ? r.createdAt.split(" ")[0] : ""}</td>
+            <td><span class="badge-status ${r.status}">${r.status}</span></td>
+            <td>${actionButtons}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderMyProjects(projects) {
+      const grid = document.getElementById("grid-my-projects");
+      if (!projects || projects.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📁</div>
+            <div class="empty-title">You haven't published any projects yet</div>
+            <div class="empty-desc">Create your first student project and recruit teammates across college departments.</div>
+            <a href="create-project.html" class="btn btn-primary btn-sm">+ Post Project</a>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = projects.map(p => {
+        const percent = Math.min(100, Math.round((p.currentMembers / p.teamSize) * 100));
+        return `
+          <div class="project-card">
+            <div class="card-top">
+              <span class="badge-cat">${p.category}</span>
+              <span class="badge-status ${p.status}">${p.status}</span>
+            </div>
+            <h3 class="card-title"><a href="project-details.html?id=${p.projectId}">${escapeHtml(p.title)}</a></h3>
+            <p class="card-desc">${escapeHtml(p.description)}</p>
+
+            <div class="team-progress">
+              <div class="team-progress-info">
+                <span>Team Positions</span>
+                <span><strong>${p.currentMembers} / ${p.teamSize}</strong> (${p.spotsRemaining} spots left)</span>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+              </div>
+            </div>
+
+            <div class="card-footer" style="margin-top:auto;">
+              <a href="create-project.html?edit=${p.projectId}" class="btn btn-secondary btn-sm">Edit</a>
+              <a href="project-details.html?id=${p.projectId}" class="btn btn-outline btn-sm">Manage &rarr;</a>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderOutgoingRequests(requests) {
+      const tbody = document.getElementById("tbody-outgoing");
+      if (!requests || requests.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2.5rem;color:var(--text-muted);">You have not sent any join requests yet. Browse projects to collaborate!</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = requests.map(r => `
+        <tr>
+          <td><a href="project-details.html?id=${r.projectId}" style="font-weight:600;">${escapeHtml(r.projectTitle)}</a></td>
+          <td>${escapeHtml(r.ownerName || "Project Lead")}</td>
+          <td style="max-width:280px;font-size:0.88rem;">${escapeHtml(r.message)}</td>
+          <td style="font-size:0.82rem;color:var(--text-muted);">${r.createdAt ? r.createdAt.split(" ")[0] : ""}</td>
+          <td><span class="badge-status ${r.status}">${r.status}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function renderJoinedTeams(projects) {
+      const grid = document.getElementById("grid-my-teams");
+      if (!projects || projects.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🤝</div>
+            <div class="empty-title">No Joined Teams</div>
+            <div class="empty-desc">You are not a member of other students' projects yet. Request to join an open project!</div>
+            <a href="projects.html" class="btn btn-secondary btn-sm">Explore Open Projects</a>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = projects.map(p => `
+        <div class="project-card">
+          <div class="card-top">
+            <span class="badge-cat">${p.category}</span>
+            <span class="badge-status ${p.status}">${p.status}</span>
+          </div>
+          <h3 class="card-title"><a href="project-details.html?id=${p.projectId}">${escapeHtml(p.title)}</a></h3>
+          <p class="card-desc">${escapeHtml(p.description)}</p>
+
+          <div class="card-footer">
+            <div class="owner-chip">
+              <div class="owner-name">Lead: ${escapeHtml(p.ownerName)}</div>
+            </div>
+            <a href="project-details.html?id=${p.projectId}" class="btn btn-outline btn-sm">View Team &rarr;</a>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function handleRequest(requestId, status) {
+      try {
+        await API.requests.updateStatus(requestId, status);
+        Toast.success(`Join request ${status.toLowerCase()}!`);
+        loadDashboard();
+      } catch (err) {
+        Toast.error(err.message);
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".dash-tab-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".dash-tab-content").forEach(content => content.classList.remove("active"));
+
+      const targetBtn = Array.from(document.querySelectorAll(".dash-tab-btn")).find(b => b.getAttribute("onclick").includes(tabId));
+      if (targetBtn) targetBtn.classList.add("active");
+
+      const targetContent = document.getElementById(tabId);
+      if (targetContent) targetContent.classList.add("active");
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    window.addEventListener("projectx:userChanged", loadDashboard);
+    document.addEventListener("DOMContentLoaded", loadDashboard);
+  </script>
+</body>
+</html>

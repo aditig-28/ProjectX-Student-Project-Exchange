@@ -1,0 +1,15 @@
+# ==============================================================================
+# ProjectX Database Configuration Template (DO NOT COMMIT REAL CREDENTIALS)
+# Copy this file to db.properties or set the corresponding environment variables:
+# PROJECTX_DB_URL, PROJECTX_DB_USER, PROJECTX_DB_PASSWORD
+# ==============================================================================
+
+db.driver=oracle.jdbc.OracleDriver
+db.url=jdbc:oracle:thin:@localhost:1521/XEPDB1
+db.username=YOUR_ORACLE_USERNAME
+db.password=YOUR_ORACLE_PASSWORD
+
+# Connection Pool Settings
+db.pool.initialSize=3
+db.pool.maxActive=10
+db.pool.maxWaitMillis=5000

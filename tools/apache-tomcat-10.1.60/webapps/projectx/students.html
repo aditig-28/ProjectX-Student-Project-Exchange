@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Directory - ProjectX</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <div class="logo-badge">PX</div>
+        <div>
+          <span>ProjectX</span>
+          <span class="logo-sub">Student Exchange</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="projects.html" class="nav-link">Explore Projects</a></li>
+        <li><a href="students.html" class="nav-link active">Students Directory</a></li>
+        <li><a href="dashboard.html" class="nav-link">My Dashboard</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="user-switcher" title="Active Demo Student">
+          <img id="header-user-avatar" class="user-avatar-sm" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Avatar">
+          <select id="demo-user-select"></select>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openRegisterModal()">+ Register Student</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container section">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Students & Collaborators Directory</h1>
+        <p class="section-desc">Connect with engineering peers, view technical skillsets, and invite teammates to your projects.</p>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="openRegisterModal()">+ Register New Student</button>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="student-search" placeholder="Search by name, department, or skill (e.g. Python, Docker, AI)...">
+      </div>
+
+      <select id="student-dept-filter" class="filter-select">
+        <option value="all">All Departments</option>
+        <option value="Computer Science">Computer Science and Engineering</option>
+        <option value="Information Technology">Information Technology</option>
+        <option value="Electronics">Electronics & Telecommunication</option>
+        <option value="Data Science">Data Science & AI</option>
+        <option value="Cybersecurity">Cybersecurity</option>
+      </select>
+
+      <button id="btn-reset-students" class="btn btn-secondary btn-sm" type="button" onclick="resetStudentFilters()">Reset</button>
+    </div>
+
+    <!-- Students Grid -->
+    <div class="cards-grid" id="students-container">
+      <div class="empty-state">
+        <div class="empty-icon">⏳</div>
+        <div class="empty-title">Loading Students...</div>
+        <div class="empty-desc">Fetching student directory from Oracle Database...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Register/Edit Student Modal -->
+  <div class="modal-backdrop" id="student-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="student-modal-title">Register New Student Profile</h3>
+        <button class="modal-close" onclick="Modal.close('student-modal')">&times;</button>
+      </div>
+      <form id="student-form">
+        <div class="modal-body">
+          <input type="hidden" id="student-id-field">
+
+          <div class="form-group">
+            <label class="form-label" for="stud-fullname">Full Name <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="stud-fullname" class="form-input" placeholder="e.g. Aditi Gawale" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="stud-email">College Email Address <span style="color:var(--danger)">*</span></label>
+            <input type="email" id="stud-email" class="form-input" placeholder="e.g. aditi.gawale@college.edu" required>
+            <div class="form-help">Must be a unique email address. Checked against Oracle DB constraint.</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+            <div class="form-group">
+              <label class="form-label" for="stud-dept">Department <span style="color:var(--danger)">*</span></label>
+              <select id="stud-dept" class="form-select" required>
+                <option value="">Select Department...</option>
+                <option value="Computer Science and Engineering">Computer Science and Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
+                <option value="Data Science & AI">Data Science & AI</option>
+                <option value="Cybersecurity">Cybersecurity</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="stud-year">Year of Study <span style="color:var(--danger)">*</span></label>
+              <select id="stud-year" class="form-select" required>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year" selected>3rd Year</option>
+                <option value="4th Year">4th Year</option>
+                <option value="Postgraduate">Postgraduate</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="stud-skills">Technical Skills</label>
+            <input type="text" id="stud-skills" class="form-input" placeholder="e.g. Java, Python, Oracle, React, AWS, Docker">
+            <div class="form-help">Comma-separated list of your technical strengths.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="stud-avatar">Avatar Image URL (Optional)</label>
+            <input type="url" id="stud-avatar" class="form-input" placeholder="https://example.com/photo.jpg">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="stud-bio">Bio & Collaboration Interests</label>
+            <textarea id="stud-bio" class="form-textarea" rows="3" placeholder="Briefly describe your interests and what kind of projects you want to build..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="Modal.close('student-modal')">Cancel</button>
+          <button type="submit" id="stud-submit-btn" class="btn btn-primary btn-sm">Save Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <div>&copy; 2026 ProjectX - Student Project Exchange Portal.</div>
+      <div>Jakarta Servlets & Oracle Database 21c XE.</div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    let allStudents = [];
+    let isEditingStudent = false;
+
+    async function loadStudents() {
+      const container = document.getElementById("students-container");
+      try {
+        const resp = await API.students.getAll();
+        allStudents = resp.data || [];
+        filterAndRenderStudents();
+      } catch (err) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <div class="empty-title">Error Loading Students</div>
+            <div class="empty-desc">${err.message}</div>
+          </div>
+        `;
+      }
+    }
+
+    function filterAndRenderStudents() {
+      const term = document.getElementById("student-search").value.trim().toLowerCase();
+      const dept = document.getElementById("student-dept-filter").value;
+
+      let filtered = allStudents;
+
+      if (term) {
+        filtered = filtered.filter(s =>
+          (s.fullName && s.fullName.toLowerCase().includes(term)) ||
+          (s.skills && s.skills.toLowerCase().includes(term)) ||
+          (s.department && s.department.toLowerCase().includes(term))
+        );
+      }
+
+      if (dept && dept !== "all") {
+        filtered = filtered.filter(s => s.department && s.department.toLowerCase().includes(dept.toLowerCase()));
+      }
+
+      renderStudents(filtered);
+    }
+
+    function renderStudents(students) {
+      const container = document.getElementById("students-container");
+      if (!students || students.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">👥</div>
+            <div class="empty-title">No Students Found</div>
+            <div class="empty-desc">No registered students match your search filter. Try clearing filters or register a new student.</div>
+            <button class="btn btn-secondary btn-sm" onclick="resetStudentFilters()">Clear Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      const activeId = UserStore.getActiveId();
+      container.innerHTML = "";
+
+      students.forEach(s => {
+        const card = document.createElement("div");
+        card.className = "student-card";
+        const isActive = s.studentId === activeId;
+        const skillsList = (s.skills || "").split(",").filter(x => x.trim()).slice(0, 4)
+          .map(sk => `<span class="tech-tag">${escapeHtml(sk.trim())}</span>`).join("");
+
+        const avatarImg = s.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
+
+        card.innerHTML = `
+          <img class="student-avatar-lg" src="${avatarImg}" alt="${escapeHtml(s.fullName)}">
+          <h3 class="student-name">${escapeHtml(s.fullName)}</h3>
+          <div class="student-dept">${escapeHtml(s.department)}</div>
+          <div class="student-year">${escapeHtml(s.yearOfStudy)} &bull; ${escapeHtml(s.email)}</div>
+          <p class="student-bio">${escapeHtml(s.bio || "Enthusiastic collegiate developer open to collaborations.")}</p>
+
+          <div class="tech-tags" style="justify-content:center; margin-bottom:1rem;">
+            ${skillsList}
+          </div>
+
+          <div class="student-metrics">
+            <div class="sm-metric">
+              <div class="sm-metric-val">${s.projectsCreated || 0}</div>
+              <div class="sm-metric-lbl">Projects</div>
+            </div>
+            <div class="sm-metric">
+              <div class="sm-metric-val">${s.teamsJoined || 0}</div>
+              <div class="sm-metric-lbl">Teams</div>
+            </div>
+            <div class="sm-metric">
+              <div class="sm-metric-val">${s.pendingRequestsSent || 0}</div>
+              <div class="sm-metric-lbl">Requests</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; width:100%;">
+            ${isActive ? 
+              `<button class="btn btn-secondary btn-sm" style="flex:1;" onclick="openEditModal(${s.studentId})">Edit Profile</button>
+               <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.studentId})">Delete</button>` :
+              `<button class="btn btn-primary btn-sm" style="flex:1;" onclick="switchUser(${s.studentId})">Switch to this User</button>`
+            }
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function switchUser(id) {
+      UserStore.setActiveId(id);
+      Toast.success("Switched active demo student!");
+      UserStore.initUserSelector();
+      loadStudents();
+    }
+
+    function openRegisterModal() {
+      isEditingStudent = false;
+      document.getElementById("student-modal-title").textContent = "Register New Student Profile";
+      document.getElementById("stud-submit-btn").textContent = "Register Student";
+      document.getElementById("student-id-field").value = "";
+      document.getElementById("student-form").reset();
+      Modal.open("student-modal");
+    }
+
+    function openEditModal(studentId) {
+      const s = allStudents.find(x => x.studentId === studentId);
+      if (!s) return;
+
+      isEditingStudent = true;
+      document.getElementById("student-modal-title").textContent = "Edit Student Profile";
+      document.getElementById("stud-submit-btn").textContent = "Save Changes";
+      document.getElementById("student-id-field").value = s.studentId;
+      document.getElementById("stud-fullname").value = s.fullName;
+      document.getElementById("stud-email").value = s.email;
+      document.getElementById("stud-dept").value = s.department;
+      document.getElementById("stud-year").value = s.yearOfStudy;
+      document.getElementById("stud-skills").value = s.skills || "";
+      document.getElementById("stud-avatar").value = s.avatarUrl || "";
+      document.getElementById("stud-bio").value = s.bio || "";
+
+      Modal.open("student-modal");
+    }
+
+    document.getElementById("student-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const studentId = document.getElementById("student-id-field").value;
+      const payload = {
+        fullName: document.getElementById("stud-fullname").value.trim(),
+        email: document.getElementById("stud-email").value.trim(),
+        department: document.getElementById("stud-dept").value,
+        yearOfStudy: document.getElementById("stud-year").value,
+        skills: document.getElementById("stud-skills").value.trim(),
+        avatarUrl: document.getElementById("stud-avatar").value.trim() || null,
+        bio: document.getElementById("stud-bio").value.trim()
+      };
+
+      try {
+        if (isEditingStudent && studentId) {
+          payload.studentId = parseInt(studentId, 10);
+          await API.students.update(studentId, payload);
+          Toast.success("Student profile updated successfully!");
+        } else {
+          const res = await API.students.create(payload);
+          Toast.success("Student registered successfully!");
+          if (res.data && res.data.studentId) {
+            UserStore.setActiveId(res.data.studentId);
+          }
+        }
+        Modal.close("student-modal");
+        UserStore.initUserSelector();
+        loadStudents();
+      } catch (err) {
+        Toast.error(err.message);
+      }
+    });
+
+    async function deleteStudent(id) {
+      if (!confirm("Are you sure you want to delete this student profile? All associated projects and requests will also be removed.")) {
+        return;
+      }
+      try {
+        await API.students.delete(id);
+        Toast.success("Student deleted successfully");
+        UserStore.setActiveId(1); // Reset to default
+        UserStore.initUserSelector();
+        loadStudents();
+      } catch (err) {
+        Toast.error(err.message);
+      }
+    }
+
+    function resetStudentFilters() {
+      document.getElementById("student-search").value = "";
+      document.getElementById("student-dept-filter").value = "all";
+      loadStudents();
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    document.getElementById("student-search").addEventListener("input", filterAndRenderStudents);
+    document.getElementById("student-dept-filter").addEventListener("change", filterAndRenderStudents);
+    window.addEventListener("projectx:userChanged", loadStudents);
+    document.addEventListener("DOMContentLoaded", loadStudents);
+  </script>
+</body>
+</html>
